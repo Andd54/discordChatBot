@@ -1,6 +1,11 @@
 import os
 import discord
 from dotenv import load_dotenv
+from gpt_trial import response
+import time
+
+BUFFER = 10
+current_time = time.time()
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
@@ -19,16 +24,12 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
-    print(str(message.content))
-    if message.author == client.user:
-        return
+    global current_time
+    if time.time() - current_time > BUFFER:
+        if message.author == client.user:
+            return
 
-    if message.content:
-        await message.channel.send('Hello!')
+        if message.content:
+            await message.channel.send(response(message.content))
 
-async def on_member_join(member):
-    await member.create_dm()
-    await member.dm_channel.send(
-        f'Hi {member.name}, welcome to my Discord server!'
-    )
 client.run(TOKEN)

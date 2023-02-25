@@ -1,7 +1,9 @@
 import os
 import openai
+from dotenv import load_dotenv
 
-openai.api_key = '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'  # API key
+load_dotenv()
+openai.api_key = os.getenv('API_KEY')  # API key
 
 
 def response(promp):
@@ -16,8 +18,7 @@ def response(promp):
         stop=[";"]
     )
     result = response.choices[0].text
-    print(result)
-    return
+    return result
 
 
 def bestOfWeek(conversation):
