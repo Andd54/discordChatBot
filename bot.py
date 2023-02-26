@@ -15,15 +15,20 @@ channel = None
 bot = commands.Bot(command_prefix='\\gpt-', intents=discord.Intents.all())
 
 
+
 @bot.command(name="chat", help="Have a conversation with GPT-3!")
-async def gpt(ctx, *, arg):
+async def gpt(ctx, arg = commands.parameter(default=None, description="input for GPT-3")):
+    if (arg == None):
+        await ctx.send("Invalid Format: For \\gpt-chat, Please include a prompt")
+        return
+    
     if (checkLength(arg)):
         await ctx.send(response(arg))
     else:
         ctx.send("Please Keep Prompts under 500 char")
 
 @bot.command(name="summarize", help="Summarize the last n minutes of a conversation")
-async def summate(ctx,n=None,channel=None):
+async def summate(ctx,n = commands.parameter(default=None, description="number of minutes to summarize"),channel = commands.parameter(default=None, description="channel to summarize")):
     if (n == None):
         await ctx.send("Invalid Format: For \\gpt-summarize, Please include 1 number indicating the last n minutes to be summarized")
         return
@@ -51,7 +56,7 @@ async def summate(ctx,n=None,channel=None):
     await ctx.send(summarize(all_messages))
 
 @bot.command(name="best", help="Select the best quote from the past n days in the current or specified channel")
-async def best(ctx, n=None):
+async def best(ctx, n = commands.parameter(default=None, description="number of days to choose from"), channel = commands.parameter(default=None, description="channel to choose from")):
     if (n == None):
         await ctx.send("Invalid Format: For \\gpt-best, Please include 1 number indicating the last n days to choose from")
         return
@@ -60,16 +65,22 @@ async def best(ctx, n=None):
     except ValueError:
         await ctx.send("Invalid Format: For \\gpt-best, Please include 1 number indicating the last n days to choose from")
         return
+    
+    if channel == None:
+        channel = ctx.channel
+    else:
+        channel = bot.get_channel(int(channel[2:-1]))
+
     messages = ""
-    async for message in ctx.channel.history(limit=100, after=datetime.today() - timedelta(days=int(n))):
+    async for message in channel.history(limit=100, after=datetime.today() - timedelta(days=int(n))):
         if message.author != bot.user and checkLength(str(message.content)) and not(str(message.content).__contains__("\\gpt")):
             messages += str(message.author) + ": '" + message.content + "'\n"
     await ctx.send(BOF(messages))
 
 @bot.command(name="sim", help="Simulate a user's messages in the current or specified channel!")
-async def sim(ctx, user=None, channel=None, minimum_characters=None):
+async def sim(ctx, user = commands.parameter(default=None, description="User to simulate"), channel = commands.parameter(default=None, description="Channel to gather data from"), minimum_characters = commands.parameter(default=None, description="Minimum character count for messages to be considered")):
     if (user == None):
-        await ctx.send("Invalid Format: For \\gpt-summarize, Please include a user to simulate (using @ notation)")
+        await ctx.send("Invalid Format: For \\gpt-sim, Please include a user to simulate (using @ notation)")
         return
     
     if (minimum_characters == None):
@@ -78,16 +89,20 @@ async def sim(ctx, user=None, channel=None, minimum_characters=None):
         try: 
             minimum_characters = int(minimum_characters)
         except ValueError:
-            await ctx.send("Invalid Format: For \\gpt-summarize, Please include a valid minimum character count")
+            await ctx.send("Invalid Format: For \\gpt-sim, Please include a valid minimum character count")
             return
     
     if channel == None:
         channel = ctx.channel
     else:
-        channel = bot.get_channel(int(channel[2:-1]))
+        try:
+            channel = bot.get_channel(int(channel[2:-1]))
+        except ValueError:
+            await ctx.send("Invalid Format: For \\gpt-sim, Please include a valid channel (using # notation)")
+            return
 
     if channel == None:
-        await ctx.send("Invalid Format: For \\gpt-summarize, Please include a valid channel (using # notation)")
+        await ctx.send("Invalid Format: For \\gpt-sim, Please include a valid channel (using # notation)")
         return
 
     messages = ""
