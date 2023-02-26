@@ -8,6 +8,7 @@ openai.api_key = os.getenv('API_KEY')  # API key
 
 
 def response(promp):
+    promp += " Please limit responses to 200 characters"
     response = openai.Completion.create(
         model="text-davinci-003",
         prompt=promp,
