@@ -1,7 +1,7 @@
 import os, time, discord
+from datetime import datetime, timedelta
 from dotenv import load_dotenv
-from gpt_trial import response
-from gpt_trial import summarize
+from gpt_trial import response, BOF, simulate, summarize
 from discord.ext import commands
 
 load_dotenv()
@@ -32,5 +32,23 @@ async def summate(ctx,n):
         else:
             break
     await ctx.send(summarize(all_messages))
+    
+@bot.command(name="best", help="Select the best quote from the past n days!")
+async def best(ctx, n):
+    messages = ""
+    async for message in ctx.channel.history(limit=10000, after=datetime.today() - timedelta(days=int(n))):
+        if message.author != bot.user:
+            messages += str(message.author) + ": '" + message.content + "'\n"
+    print(messages)
+    await ctx.send(BOF(messages))
+
+@bot.command(name="sim", help="Simulate a user's messages!")
+async def sim(ctx, user):
+    messages = ""
+    async for message in ctx.channel.history(limit=10000):
+        if message.author.mention == user:
+            messages = message.content + '\n' + messages
+    print(messages)
+    await ctx.send(simulate(messages))
 
 bot.run(TOKEN)
