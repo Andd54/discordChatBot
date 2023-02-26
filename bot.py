@@ -16,7 +16,7 @@ bot = commands.Bot(command_prefix='\\gpt-', intents=discord.Intents.all())
 
 
 
-@bot.command(name="chat", help="Have a conversation with GPT-3!")
+@bot.command(name="chat", help="Have a conversation with GPT-3")
 async def gpt(ctx, arg = commands.parameter(default=None, description="input for GPT-3")):
     if (arg == None):
         await ctx.send("Invalid Format: For \\gpt-chat, Please include a prompt")
@@ -77,7 +77,7 @@ async def best(ctx, n = commands.parameter(default=None, description="number of 
             messages += str(message.author) + ": '" + message.content + "'\n"
     await ctx.send(BOF(messages))
 
-@bot.command(name="sim", help="Simulate a user's messages in the current or specified channel!")
+@bot.command(name="sim", help="Simulate a user's messages in the current or specified channel")
 async def sim(ctx, user = commands.parameter(default=None, description="User to simulate"), channel = commands.parameter(default=None, description="Channel to gather data from"), minimum_characters = commands.parameter(default=None, description="Minimum character count for messages to be considered")):
     if (user == None):
         await ctx.send("Invalid Format: For \\gpt-sim, Please include a user to simulate (using @ notation)")
@@ -117,14 +117,14 @@ async def sim(ctx, user = commands.parameter(default=None, description="User to 
     else:
         await ctx.send("No User Messages found. Hint: Make sure you are using @ notation")
 
-@bot.command(name="start", help="Start a conversation with GPT-3!")
+@bot.command(name="start", help="Start a conversation with GPT-3")
 async def start(ctx, *args):
     global channel, conversation
     conversation = "Previously, we had the following conversation, please continue it: \n"
     channel = ctx.channel
     await ctx.send(response("Hello!"))
 
-@bot.command(name="stop", help="Stop a conversation with GPT-3!")
+@bot.command(name="stop", help="Stop a conversation with GPT-3")
 async def stop(ctx, *args):
     global channel, conversation
     channel = None
