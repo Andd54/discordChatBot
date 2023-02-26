@@ -22,8 +22,8 @@ async def gpt(ctx, *, arg):
     else:
         ctx.send("Please Keep Prompts under 500 char")
 
-@bot.command(name="summarize", help="Summarize last conversation, number n is last n minutes summarized")
-async def summate(ctx,n=None):
+@bot.command(name="summarize", help="Summarize the last n minutes of a conversation")
+async def summate(ctx,n=None,channel=None):
     if (n == None):
         await ctx.send("Invalid Format: For \\gpt-summarize, Please include 1 number indicating the last n minutes to be summarized")
         return
@@ -32,8 +32,14 @@ async def summate(ctx,n=None):
     except ValueError:
         await ctx.send("Invalid Format: For \\gpt-summarize, Please include 1 number indicating the last n minutes to be summarized")
         return
+    
+    if channel == None:
+        channel = ctx.channel
+    else:
+        channel = bot.get_channel(int(channel[2:-1]))
+
     all_messages = ""
-    async for message in ctx.channel.history(limit=200):
+    async for message in channel.history(limit=100):
         if (str(message.content).__contains__("\\gpt") or message.author == bot.user):
             continue
         if checkLength(str(message.content)) and (time.time() - message.created_at.timestamp()) < (n * 60) :
@@ -44,7 +50,7 @@ async def summate(ctx,n=None):
             break
     await ctx.send(summarize(all_messages))
 
-@bot.command(name="best", help="Select the best quote from the past n days!")
+@bot.command(name="best", help="Select the best quote from the past n days in the current or specified channel")
 async def best(ctx, n=None):
     if (n == None):
         await ctx.send("Invalid Format: For \\gpt-best, Please include 1 number indicating the last n days to choose from")
@@ -55,23 +61,42 @@ async def best(ctx, n=None):
         await ctx.send("Invalid Format: For \\gpt-best, Please include 1 number indicating the last n days to choose from")
         return
     messages = ""
-    async for message in ctx.channel.history(limit=10000, after=datetime.today() - timedelta(days=int(n))):
+    async for message in ctx.channel.history(limit=100, after=datetime.today() - timedelta(days=int(n))):
         if message.author != bot.user and checkLength(str(message.content)) and not(str(message.content).__contains__("\\gpt")):
             messages += str(message.author) + ": '" + message.content + "'\n"
     await ctx.send(BOF(messages))
 
-@bot.command(name="sim", help="Simulate a user's messages!")
-async def sim(ctx, user=None):
+@bot.command(name="sim", help="Simulate a user's messages in the current or specified channel!")
+async def sim(ctx, user=None, channel=None, minimum_characters=None):
     if (user == None):
         await ctx.send("Invalid Format: For \\gpt-summarize, Please include a user to simulate (using @ notation)")
         return
+    
+    if (minimum_characters == None):
+        minimum_characters = 0
+    else:
+        try: 
+            minimum_characters = int(minimum_characters)
+        except ValueError:
+            await ctx.send("Invalid Format: For \\gpt-summarize, Please include a valid minimum character count")
+            return
+    
+    if channel == None:
+        channel = ctx.channel
+    else:
+        channel = bot.get_channel(int(channel[2:-1]))
+
+    if channel == None:
+        await ctx.send("Invalid Format: For \\gpt-summarize, Please include a valid channel (using # notation)")
+        return
+
     messages = ""
     track = False
-    async for message in ctx.channel.history(limit=10000):
-        if message.author.mention == user and checkLength(str(message.content)):
+    async for message in channel.history(limit=100):
+        if message.author.mention == user and checkLength(str(message.content)) and len(message.content) > minimum_characters:
             track = True
             messages = message.content + '\n' + messages
-    print(messages)
+    
     if (track):
         await ctx.send(simulate(messages))
     else:

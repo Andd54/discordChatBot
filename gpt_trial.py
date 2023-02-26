@@ -95,11 +95,11 @@ def summarize(conversation):
     return response.choices[0].text
 
 def simulate(user_messages):
-    prompt = 'Below is a list of messages from a person. Please write a message in their style: \n'+user_messages
+    prompt = 'Below is a list of messages from a person. Please write a message in their exact style: \n'+user_messages
     response = openai.Completion.create(
         model="text-davinci-003",
         prompt=prompt,
-        temperature=0.9,
+        temperature=0.5,
         max_tokens=64,
         top_p=1.0,
         frequency_penalty=0.0,
