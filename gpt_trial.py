@@ -80,7 +80,6 @@ def BOF(conversation):
 
 def summarize(conversation):
     conversation = 'Please summarize the following content: \n' + conversation
-    print(conversation + '\n')
     response = openai.Completion.create(
         model="text-davinci-003",
         prompt=conversation,
