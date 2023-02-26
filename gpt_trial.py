@@ -31,7 +31,7 @@ def bestOfWeek(conversation):
     response = openai.Completion.create(
         model="text-davinci-003",
         prompt=conversation,
-        temperature=0,
+        temperature=0.5,
         max_tokens=64,
         top_p=1.0,
         frequency_penalty=0.0,
@@ -47,7 +47,7 @@ def bestOfWeek2(conversation):
     response = openai.Completion.create(
         model="text-davinci-003",
         prompt=conversation,
-        temperature=0,
+        temperature=0.5,
         max_tokens=64,
         top_p=1.0,
         frequency_penalty=0.0,
@@ -63,7 +63,7 @@ def bestOfWeek3(conversation):
     response = openai.Completion.create(
         model="text-davinci-003",
         prompt=conversation,
-        temperature=0,
+        temperature=0.5,
         max_tokens=64,
         top_p=1.0,
         frequency_penalty=0.0,
@@ -96,11 +96,11 @@ def summarize(conversation):
     return response.choices[0].text
 
 def simulate(user_messages):
-    prompt = user_messages+'Above is a list of messages from a person. Please write a message in their style: \n'
+    prompt = 'Below is a list of messages from a person. Please write a message in their style: \n'+user_messages
     response = openai.Completion.create(
         model="text-davinci-003",
         prompt=prompt,
-        temperature=0,
+        temperature=0.9,
         max_tokens=64,
         top_p=1.0,
         frequency_penalty=0.0,
