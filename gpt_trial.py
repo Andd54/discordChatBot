@@ -90,3 +90,16 @@ def summarize(conversation):
         presence_penalty=0.0
     )
     return response.choices[0].text
+
+def simulate(user_messages):
+    prompt = user_messages+'Above is a list of messages from a person. Please write a message in their style: \n'
+    response = openai.Completion.create(
+        model="text-davinci-003",
+        prompt=prompt,
+        temperature=0,
+        max_tokens=64,
+        top_p=1.0,
+        frequency_penalty=0.0,
+        presence_penalty=0.0
+    )
+    return response.choices[0].text

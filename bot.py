@@ -1,7 +1,7 @@
 import os, time, discord
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
-from gpt_trial import response, BOF
+from gpt_trial import response, BOF, simulate
 from discord.ext import commands
 
 load_dotenv()
@@ -21,5 +21,14 @@ async def best(ctx, n):
             messages += str(message.author) + ": '" + message.content + "'\n"
     print(messages)
     await ctx.send(BOF(messages))
+
+@bot.command(name="sim", help="Simulate a user's messages!")
+async def sim(ctx, user):
+    messages = ""
+    async for message in ctx.channel.history(limit=10000):
+        if message.author.mention == user:
+            messages = message.content + '\n' + messages
+    print(messages)
+    await ctx.send(simulate(messages))
 
 bot.run(TOKEN)
