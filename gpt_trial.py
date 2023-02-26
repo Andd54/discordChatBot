@@ -6,6 +6,9 @@ from dotenv import load_dotenv
 load_dotenv()
 openai.api_key = os.getenv('API_KEY')  # API key
 
+def checkLength(input):
+    return (len(input) <= 500)
+
 
 def response(promp):
     promp += " Please limit responses to 200 characters"
