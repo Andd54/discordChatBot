@@ -24,7 +24,7 @@ def response(promp):
 
 
 def bestOfWeek(conversation):
-    conversation = "please select the funniest quote of the week: \n" + conversation
+    conversation = "please select the funniest quote from this conversation: \n" + conversation
     response = openai.Completion.create(
         model="text-davinci-003",
         prompt=conversation,
@@ -35,12 +35,12 @@ def bestOfWeek(conversation):
         presence_penalty=0.0,
         stop=[";"]
     )
-    result = response.choices[0].text
+    result = "Funniest: "+response.choices[0].text
     return result
 
 
 def bestOfWeek2(conversation):
-    conversation = "please select the most raging quote of the week: \n" + conversation
+    conversation = "please select the most raging quote from this conversation: \n" + conversation
     response = openai.Completion.create(
         model="text-davinci-003",
         prompt=conversation,
@@ -52,11 +52,11 @@ def bestOfWeek2(conversation):
         stop=[";"]
     )
     result = response.choices[0].text
-    return result
+    return "Most Raging: "+result
 
 
 def bestOfWeek3(conversation):
-    conversation = "please select the saddest quote of the week: \n" + conversation
+    conversation = "please select the saddest quote from this conversation: \n" + conversation
     response = openai.Completion.create(
         model="text-davinci-003",
         prompt=conversation,
@@ -68,7 +68,7 @@ def bestOfWeek3(conversation):
         stop=[";"]
     )
     result = response.choices[0].text
-    return result
+    return "Saddest: "+result
 
 
 def BOF(conversation):
